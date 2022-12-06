@@ -306,16 +306,15 @@ endef
 # There are two versions, either creating a relative or an absolute link. Be
 # careful when using this on Windows since the symlink created is only valid in
 # the unix emulation environment.
-# In msys2 we use mklink /J because ln would copy the target file system tree.
-# This inhibits performance and can lead to issues with long paths.
+# In msys2 we use mklink /J because its ln would perform a deep copy of the target.
+# This inhibits performance and can lead to issues with long paths. With mklink /J
+# relative linking does not work, so we handle the link as absolute path.
 define link-file-relative
 	$(call MakeTargetDir)
 	$(RM) '$(call DecodeSpace, $@)'
 	if [ "$(OPENJDK_BUILD_OS_ENV)" = "windows.msys2" ]; then \
-	  $(ECHO) "cltrcrel cmd //c \"mklink /J $(call FixPath, $(call DecodeSpace, $@)) $(call FixPath, $(call DecodeSpace, $<))\""; \
 	  cmd //c "mklink /J $(call FixPath, $(call DecodeSpace, $@)) $(call FixPath, $(call DecodeSpace, $<))"; \
 	else \
-	  $(ECHO) "cltrcrel $(LN) -s $(call DecodeSpace, $(call RelativePath, $<, $(@D))) $(call DecodeSpace, $@)"; \
 	  $(LN) -s '$(call DecodeSpace, $(call RelativePath, $<, $(@D)))' '$(call DecodeSpace, $@)'; \
 	fi
 endef
@@ -324,10 +323,8 @@ define link-file-absolute
 	$(call MakeTargetDir)
 	$(RM) '$(call DecodeSpace, $@)'
 	if [ "$(OPENJDK_BUILD_OS_ENV)" = "windows.msys2" ]; then \
-	  $(ECHO) "cltrcabs cmd //c \"mklink /J $(call FixPath, $(call DecodeSpace, $@)) $(call FixPath, $(call DecodeSpace, $<))\""; \
 	  cmd //c "mklink /J $(call FixPath, $(call DecodeSpace, $@)) $(call FixPath, $(call DecodeSpace, $<))"; \
 	else \
-	  $(ECHO) "cltrcabs $(LN) -s $(call DecodeSpace, $<) $(call DecodeSpace, $@)"; \
 	  $(LN) -s '$(call DecodeSpace, $<)' '$(call DecodeSpace, $@)'; \
 	fi
 endef
