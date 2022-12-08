@@ -166,3 +166,4 @@ vmTestbase/nsk/jdwp/ThreadReference/ForceEarlyReturn/forceEarlyReturn001/forceEa
 
 vmTestbase/nsk/stress/except/except012.java 8297977 generic-all
 vmTestbase/nsk/stress/strace/strace004.java 8297824 macosx-x64,windows-x64
+vmTestbase/nsk/monitoring/ThreadMXBean/ThreadInfo/Multi/Multi005/TestDescription.java 8076494 windows-x64
