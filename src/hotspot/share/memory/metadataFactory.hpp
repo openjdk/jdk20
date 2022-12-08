@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010, 2021, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2010, 2022, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -27,6 +27,8 @@
 
 #include "classfile/classLoaderData.hpp"
 #include "memory/classLoaderMetaspace.hpp"
+#include "metaprogramming/removeCV.hpp"
+#include "metaprogramming/removePointer.hpp"
 #include "oops/array.inline.hpp"
 #include "utilities/exceptions.hpp"
 #include "utilities/globalDefinitions.hpp"
@@ -65,10 +67,17 @@ class MetadataFactory : AllStatic {
     if (md != NULL) {
       assert(loader_data != NULL, "shouldn't pass null");
       int size = md->size();
-      // Call metadata's deallocate function which will call deallocate fields
+      // Call metadata's deallocate function which will deallocate fields and release_C_heap_structures
       assert(!md->on_stack(), "can't deallocate things on stack");
       assert(!md->is_shared(), "cannot deallocate if in shared spaces");
       md->deallocate_contents(loader_data);
+      // If requested, call the destructor. This is currently used for MethodData which has a member
+      // that needs to be destructed to release resources. Most Metadata derived classes have noop
+      // destructors and/or cleanup using deallocate_contents.
+      // T is a potentially const or volatile qualified pointer. Remove the pointer and any const
+      // or volatile so we can call the destructor of the type T points to.
+      using U = typename RemoveCV<typename RemovePointer<T>::type>::type;
+      md->~U();
       loader_data->metaspace_non_null()->deallocate((MetaWord*)md, size, md->is_klass());
     }
   }
