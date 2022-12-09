@@ -1357,7 +1357,13 @@ class Stream<T> extends ExchangeImpl<T> {
         if (debug.on()) debug.log("subscriber is %s", s);
         if (s instanceof Http2StreamResponseSubscriber<?> sw) {
             if (debug.on()) debug.log("closing response subscriber stream %s", streamid);
-            sw.streamClosed(errorRef.get());
+            // if the subscriber has already completed,
+            // there is nothing to do...
+            if (!sw.completed()) {
+                // otherwise make sure it will be completed
+                var cause = errorRef.get();
+                sw.complete(cause == null ? new IOException("stream closed") : cause);
+            }
         }
         Log.logTrace("Stream {0} closed", streamid);
     }
@@ -1587,23 +1593,6 @@ class Stream<T> extends ExchangeImpl<T> {
         @Override
         protected void onCancel() {
             unregisterResponseSubscriber(this);
-        }
-
-        /**
-         * Make sure the subscriber gets completed if the stream gets closed
-         * asynchronously outside of cancelImpl.
-         * @param cause the error cause, if any
-         */
-        public void streamClosed(Throwable cause) {
-            // if the subscriber has already completed,
-            // there is nothing to do...
-            if (!completed()) {
-                // otherwise make sure it will be completed
-                var ex = cause == null
-                        ? new IOException("stream closed")
-                        : cause;
-                complete(ex);
-            }
         }
 
     }
