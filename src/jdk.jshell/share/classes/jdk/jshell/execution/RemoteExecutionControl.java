@@ -58,6 +58,8 @@ public class RemoteExecutionControl extends DirectExecutionControl implements Ex
      * @throws Exception any unexpected exception
      */
     public static void main(String[] args) throws Exception {
+        //disable System.console()
+        System.setProperty("jdk.console", "java.base");
         String loopBack = null;
         Socket socket = new Socket(loopBack, Integer.parseInt(args[0]));
         InputStream inStream = socket.getInputStream();
