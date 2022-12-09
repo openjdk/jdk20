@@ -309,25 +309,33 @@ endef
 # In msys2 we use mklink /J because its ln would perform a deep copy of the target.
 # This inhibits performance and can lead to issues with long paths. With mklink /J
 # relative linking does not work, so we handle the link as absolute path.
-define link-file-relative
+ifeq ($(OPENJDK_BUILD_OS_ENV), windows.msys2)
+  define link-file-relative
 	$(call MakeTargetDir)
 	$(RM) '$(call DecodeSpace, $@)'
-  ifeq ($(OPENJDK_BUILD_OS_ENV), windows.msys2)
 	cmd //c "mklink /J $(call FixPath, $(call DecodeSpace, $@)) $(call FixPath, $(call DecodeSpace, $<))"
-  else
+  endef
+else
+  define link-file-relative
+	$(call MakeTargetDir)
+	$(RM) '$(call DecodeSpace, $@)'
 	$(LN) -s '$(call DecodeSpace, $(call RelativePath, $<, $(@D)))' '$(call DecodeSpace, $@)'
-  endif
-endef
+  endef
+endif
 
-define link-file-absolute
+ifeq ($(OPENJDK_BUILD_OS_ENV), windows.msys2)
+  define link-file-absolute
 	$(call MakeTargetDir)
 	$(RM) '$(call DecodeSpace, $@)'
-  ifeq ($(OPENJDK_BUILD_OS_ENV), windows.msys2)
 	cmd //c "mklink /J $(call FixPath, $(call DecodeSpace, $@)) $(call FixPath, $(call DecodeSpace, $<))"
-  else
+  endef
+else
+  define link-file-absolute
+	$(call MakeTargetDir)
+	$(RM) '$(call DecodeSpace, $@)'
 	$(LN) -s '$(call DecodeSpace, $<)' '$(call DecodeSpace, $@)'
-  endif
-endef
+  endef
+endif
 
 ################################################################################
 
