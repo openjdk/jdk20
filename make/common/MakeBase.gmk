@@ -312,21 +312,21 @@ endef
 define link-file-relative
 	$(call MakeTargetDir)
 	$(RM) '$(call DecodeSpace, $@)'
-    ifeq ($(OPENJDK_BUILD_OS_ENV), windows.msys2)
-	  cmd //c "mklink /J $(call FixPath, $(call DecodeSpace, $@)) $(call FixPath, $(call DecodeSpace, $<))"
-    else
-	  $(LN) -s '$(call DecodeSpace, $(call RelativePath, $<, $(@D)))' '$(call DecodeSpace, $@)'
-    endif
+  ifeq ($(OPENJDK_BUILD_OS_ENV), windows.msys2)
+	cmd //c "mklink /J $(call FixPath, $(call DecodeSpace, $@)) $(call FixPath, $(call DecodeSpace, $<))"
+  else
+	$(LN) -s '$(call DecodeSpace, $(call RelativePath, $<, $(@D)))' '$(call DecodeSpace, $@)'
+  endif
 endef
 
 define link-file-absolute
 	$(call MakeTargetDir)
 	$(RM) '$(call DecodeSpace, $@)'
-    ifeq ($(OPENJDK_BUILD_OS_ENV), windows.msys2)
-	  cmd //c "mklink /J $(call FixPath, $(call DecodeSpace, $@)) $(call FixPath, $(call DecodeSpace, $<))"
-    else
-	  $(LN) -s '$(call DecodeSpace, $<)' '$(call DecodeSpace, $@)'
-    endif
+  ifeq ($(OPENJDK_BUILD_OS_ENV), windows.msys2)
+	cmd //c "mklink /J $(call FixPath, $(call DecodeSpace, $@)) $(call FixPath, $(call DecodeSpace, $<))"
+  else
+	$(LN) -s '$(call DecodeSpace, $<)' '$(call DecodeSpace, $@)'
+  endif
 endef
 
 ################################################################################
