@@ -3686,6 +3686,14 @@ bool IdealLoopTree::do_remove_empty_loop(PhaseIdealLoop *phase) {
   Node* exact_limit = phase->exact_limit(this);
   Node* final_iv = new SubINode(exact_limit, cl->stride());
   phase->register_new_node(final_iv, cl->in(LoopNode::EntryControl));
+
+  Node* castii = phi->in(LoopNode::EntryControl);
+  // if phi has CastII with carry_dependency, create a new CastII to pin final_iv
+  if (castii->is_CastII() && castii->as_CastII()->carry_dependency()) {
+    Node* cast = ConstraintCastNode::make(castii->in(0), exact_limit, phase->_igvn.type(exact_limit), ConstraintCastNode::UnconditionalDependency, T_INT);
+    phase->_igvn.register_new_node_with_optimizer(cast);
+    phase->_igvn.replace_input_of(final_iv, 1, cast);
+  }
   phase->_igvn.replace_node(phi, final_iv);
 
   // Set loop-exit condition to false. Then the CountedLoopEnd will collapse,
