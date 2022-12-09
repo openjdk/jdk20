@@ -26,7 +26,7 @@
 * @bug 8289748
 * @summary SIGFPE caused by C2 IdealLoopTree::do_remove_empty_loop
 *
-* @run main/othervm -XX:-TieredCompilation -Xcomp -XX:+UseG1GC
+* @run main/othervm -XX:-TieredCompilation -Xcomp
 *                   -XX:CompileOnly=compiler.loopopts.TestRemoveEmptyCountedLoop::test
 *                   compiler.loopopts.TestRemoveEmptyCountedLoop
 */
