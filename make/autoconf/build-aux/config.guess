@@ -91,6 +91,16 @@ if [ "x$OUT" = x ]; then
   fi
 fi
 
+# Test and fix cygwin machine arch .x86_64
+# TODO: should be handled by autoconf-config.guess.
+if [ "x$OUT" = x ]; then
+  if [ `uname -m` = ".x86_64" ]; then
+    if [[ `uname -s` = CYGWIN* ]]; then
+      OUT=x86_64-unknown-cygwin
+    fi
+  fi
+fi
+
 # Test and fix little endian MIPS.
 if [ "x$OUT" = x ]; then
   if [ `uname -s` = Linux ]; then

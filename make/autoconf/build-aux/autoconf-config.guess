@@ -866,7 +866,8 @@ EOF
     i*:UWIN*:*)
 	echo ${UNAME_MACHINE}-pc-uwin
 	exit ;;
-    amd64:CYGWIN*:*:* | x86_64:CYGWIN*:*:* | .x86_64:CYGWIN*:*:*)
+    #amd64:CYGWIN*:*:* | x86_64:CYGWIN*:*:* | .x86_64:CYGWIN*:*:*)
+    amd64:CYGWIN*:*:* | x86_64:CYGWIN*:*:*)
 	echo x86_64-unknown-cygwin
 	exit ;;
     p*:CYGWIN*:*)
