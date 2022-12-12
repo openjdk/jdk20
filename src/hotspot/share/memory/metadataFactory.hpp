@@ -27,11 +27,10 @@
 
 #include "classfile/classLoaderData.hpp"
 #include "memory/classLoaderMetaspace.hpp"
-#include "metaprogramming/removeCV.hpp"
-#include "metaprogramming/removePointer.hpp"
 #include "oops/array.inline.hpp"
 #include "utilities/exceptions.hpp"
 #include "utilities/globalDefinitions.hpp"
+#include <type_traits>
 
 class MetadataFactory : AllStatic {
  public:
@@ -71,12 +70,12 @@ class MetadataFactory : AllStatic {
       assert(!md->on_stack(), "can't deallocate things on stack");
       assert(!md->is_shared(), "cannot deallocate if in shared spaces");
       md->deallocate_contents(loader_data);
-      // If requested, call the destructor. This is currently used for MethodData which has a member
+      // Call the destructor. This is currently used for MethodData which has a member
       // that needs to be destructed to release resources. Most Metadata derived classes have noop
       // destructors and/or cleanup using deallocate_contents.
       // T is a potentially const or volatile qualified pointer. Remove the pointer and any const
       // or volatile so we can call the destructor of the type T points to.
-      using U = typename RemoveCV<typename RemovePointer<T>::type>::type;
+      using U = std::remove_cv_t<std::remove_pointer_t<T>>;
       md->~U();
       loader_data->metaspace_non_null()->deallocate((MetaWord*)md, size, md->is_klass());
     }
