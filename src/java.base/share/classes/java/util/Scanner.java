@@ -55,7 +55,8 @@ import sun.util.locale.provider.ResourceBundleBasedAdapter;
  * {@snippet :
  *     var con = System.console();
  *     if (con != null) {
- *         Scanner sc = new Scanner(con.reader()); // @link substring="reader()" target="java.io.Console#reader()"
+ *         // @link substring="reader()" target="java.io.Console#reader()" :
+ *         Scanner sc = new Scanner(con.reader());
  *         int i = sc.nextInt();
  *     }
  * }
