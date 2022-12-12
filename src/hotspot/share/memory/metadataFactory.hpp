@@ -62,7 +62,7 @@ class MetadataFactory : AllStatic {
 
   // Deallocation method for metadata
   template <class T>
-  static void free_metadata(ClassLoaderData* loader_data, T md) {
+  static void free_metadata(ClassLoaderData* loader_data, T* md) {
     if (md != NULL) {
       assert(loader_data != NULL, "shouldn't pass null");
       int size = md->size();
@@ -75,7 +75,7 @@ class MetadataFactory : AllStatic {
       // destructors and/or cleanup using deallocate_contents.
       // T is a potentially const or volatile qualified pointer. Remove the pointer and any const
       // or volatile so we can call the destructor of the type T points to.
-      using U = std::remove_cv_t<std::remove_pointer_t<T>>;
+      using U = std::remove_cv_t<T>;
       md->~U();
       loader_data->metaspace_non_null()->deallocate((MetaWord*)md, size, md->is_klass());
     }
