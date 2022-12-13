@@ -2664,9 +2664,7 @@ static void method_release_C_heap_structures(Method* m) {
   m->release_C_heap_structures();
 }
 
-// Called also by InstanceKlass::deallocate_contents, with false for releasing C heap
-// data pointed to metadata that this InstanceKlass points to (the subordinate metadata
-// releases its own C heap structures).
+// Called also by InstanceKlass::deallocate_contents, with false for release_sub_metadata.
 void InstanceKlass::release_C_heap_structures(bool release_sub_metadata) {
   // Clean up C heap
   Klass::release_C_heap_structures();
