@@ -59,6 +59,7 @@ class Opaque1Node : public Node {
 class OpaqueLoopInitNode : public Opaque1Node {
   public:
   OpaqueLoopInitNode(Compile* C, Node *n) : Opaque1Node(C, n) {
+    init_class_id(Class_OpaqueLoopInit);
   }
   virtual int Opcode() const;
 };
@@ -66,6 +67,7 @@ class OpaqueLoopInitNode : public Opaque1Node {
 class OpaqueLoopStrideNode : public Opaque1Node {
   public:
   OpaqueLoopStrideNode(Compile* C, Node *n) : Opaque1Node(C, n) {
+    init_class_id(Class_OpaqueLoopStride);
   }
   virtual int Opcode() const;
 };
@@ -73,8 +75,26 @@ class OpaqueLoopStrideNode : public Opaque1Node {
 class OpaqueZeroTripGuardNode : public Opaque1Node {
 public:
   OpaqueZeroTripGuardNode(Compile* C, Node *n) : Opaque1Node(C, n) {
+    init_class_id(Class_OpaqueZeroTripGuard);
   }
   virtual int Opcode() const;
+};
+
+class OpaqueZeroTripGuardMainLoopNode : public OpaqueZeroTripGuardNode {
+public:
+  OpaqueZeroTripGuardMainLoopNode(Compile* C, Node *n) : OpaqueZeroTripGuardNode(C, n) {
+    init_class_id(Class_OpaqueZeroTripGuardMainLoop);
+  }
+  virtual int Opcode() const;
+};
+
+class OpaqueZeroTripGuardPostLoopNode : public OpaqueZeroTripGuardNode {
+public:
+  OpaqueZeroTripGuardPostLoopNode(Compile* C, Node *n) : OpaqueZeroTripGuardNode(C, n) {
+    init_class_id(Class_OpaqueZeroTripGuardPostLoop);
+  }
+  virtual int Opcode() const;
+  virtual Node* Identity(PhaseGVN* phase);
 };
 
 //------------------------------Opaque3Node------------------------------------
