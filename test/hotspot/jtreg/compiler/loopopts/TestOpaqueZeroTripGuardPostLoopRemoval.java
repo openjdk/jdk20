@@ -105,7 +105,7 @@ public class TestOpaqueZeroTripGuardPostLoopRemoval {
 
     public static int test_005() {
         long arr[]=new long[400];
-	for (int i = 3; i < 177; i++) {
+        for (int i = 3; i < 177; i++) {
             for (int j = 0; j < 10; j++){}
         }
         int y = 0;
