@@ -595,9 +595,9 @@ void InstanceKlass::deallocate_contents(ClassLoaderData* loader_data) {
 
   // Release C heap allocated data that this points to, which includes
   // reference counting symbol names.
-  // Can't release the constant pool here because the constant pool can be
-  // deallocated separately from the InstanceKlass for default methods and
-  // redefine classes.
+  // Can't release the constant pool or MethodData C heap data here because the constant
+  // pool can be deallocated separately from the InstanceKlass for default methods and
+  // redefine classes.  MethodData can also be released separately.
   release_C_heap_structures(/* release_sub_metadata */ false);
 
   deallocate_methods(loader_data, methods());
@@ -2664,7 +2664,9 @@ static void method_release_C_heap_structures(Method* m) {
   m->release_C_heap_structures();
 }
 
-// Called also by InstanceKlass::deallocate_contents, with false for release_constant_pool.
+// Called also by InstanceKlass::deallocate_contents, with false for releasing C heap
+// data pointed to metadata that this InstanceKlass points to (the subordinate metadata
+// releases its own C heap structures).
 void InstanceKlass::release_C_heap_structures(bool release_sub_metadata) {
   // Clean up C heap
   Klass::release_C_heap_structures();
