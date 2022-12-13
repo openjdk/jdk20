@@ -1708,9 +1708,9 @@ void PhaseIdealLoop::insert_pre_post_loops(IdealLoopTree *loop, Node_List &old_n
   // pre-loop, the main-loop may not execute at all.  Later in life this
   // zero-trip guard will become the minimum-trip guard when we unroll
   // the main-loop.
-  Node *min_opaq = new OpaqueZeroTripGuardMainLoopNode(C, limit);
-  Node *min_cmp  = new CmpINode(pre_incr, min_opaq);
-  Node *min_bol  = new BoolNode(min_cmp, b_test);
+  Node* min_opaq = new OpaqueZeroTripGuardMainLoopNode(C, limit);
+  Node* min_cmp  = new CmpINode(pre_incr, min_opaq);
+  Node* min_bol  = new BoolNode(min_cmp, b_test);
   register_new_node(min_opaq, new_pre_exit);
   register_new_node(min_cmp , new_pre_exit);
   register_new_node(min_bol , new_pre_exit);
@@ -1997,9 +1997,9 @@ Node *PhaseIdealLoop::insert_post_loop(IdealLoopTree* loop, Node_List& old_new,
   // (the previous loop trip-counter exit value) because we will be changing
   // the exit value (via additional unrolling) so we cannot constant-fold away the zero
   // trip guard until all unrolling is done.
-  Node *zer_opaq = new OpaqueZeroTripGuardPostLoopNode(C, incr);
-  Node *zer_cmp = new CmpINode(zer_opaq, limit);
-  Node *zer_bol = new BoolNode(zer_cmp, main_end->test_trip());
+  Node* zer_opaq = new OpaqueZeroTripGuardPostLoopNode(C, incr);
+  Node* zer_cmp = new CmpINode(zer_opaq, limit);
+  Node* zer_bol = new BoolNode(zer_cmp, main_end->test_trip());
   register_new_node(zer_opaq, new_main_exit);
   register_new_node(zer_cmp, new_main_exit);
   register_new_node(zer_bol, new_main_exit);
