@@ -29,10 +29,7 @@
 # and fix the broken property, if needed.
 
 DIR=`dirname $0`
-TMPFILE=`mktemp`
-OUT=`. $DIR/autoconf-config.guess 2> "$TMPFILE"`
-ERR=`cat "$TMPFILE"`
-rm "$TMPFILE"
+OUT=`. $DIR/autoconf-config.guess 2> /dev/null`
 
 # Handle some cases that autoconf-config.guess is not capable of
 if [ "x$OUT" = x ]; then
@@ -60,7 +57,8 @@ if [ "x$OUT" = x ]; then
   fi
 
   if [ "x$OUT" = x ]; then
-    echo $ERR >&2
+    # Run autoconf-config.guess again to get the error message.
+    . $DIR/autoconf-config.guess > /dev/null
   else
     printf "guessed by custom config.guess... " >&2
   fi
