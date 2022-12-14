@@ -261,7 +261,7 @@ final class DiskRepository implements Closeable {
 
         eventFieldSize++;
         byte b = nextByte(false);
-        int v = (b & 0x7F);
+        long v = (b & 0x7F);
         payLoadSize += (v << sizeShift);
         if (b >= 0) {
             if (payLoadSize == 0) {
