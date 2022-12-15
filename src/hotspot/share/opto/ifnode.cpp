@@ -1738,6 +1738,29 @@ Node* IfProjNode::Identity(PhaseGVN* phase) {
   return this;
 }
 
+// Find this pattern: If -> Bool -> CmpI -> OpaqueZeroTripGuard
+// For the main loop, the opaque node is the second input to cmp,
+// for the post loop it's the first input node.
+OpaqueZeroTripGuardNode* IfNode::find_opaque_zero_trip_guard() const {
+  Node* bol = in(1);
+  if (bol != nullptr && bol->is_Bool()) {
+    Node* cmp = bol->in(1);
+    if (cmp != nullptr && cmp->Opcode() == Op_CmpI) {
+      Node* in1 = (cmp->req() > 1) ? cmp->in(1) : nullptr;
+      if (in1 != nullptr && in1->is_OpaqueZeroTripGuard()) {
+        assert(in1->is_OpaqueZeroTripGuardPostLoop(), "post loop pattern");
+        return in1->as_OpaqueZeroTripGuard();
+      }
+      Node* in2 = (cmp->req() > 2) ? cmp->in(2) : nullptr;
+      if (in2 != nullptr && in2->is_OpaqueZeroTripGuard()) {
+        assert(in2->is_OpaqueZeroTripGuardMainLoop(), "main loop pattern");
+        return in2->as_OpaqueZeroTripGuard();
+      }
+    }
+  }
+  return nullptr;
+}
+
 #ifndef PRODUCT
 //------------------------------dump_spec--------------------------------------
 void IfNode::dump_spec(outputStream *st) const {

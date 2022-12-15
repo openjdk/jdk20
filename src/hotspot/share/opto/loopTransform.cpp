@@ -1294,15 +1294,11 @@ Node* PhaseIdealLoop::cast_incr_before_loop(Node* incr, Node* ctrl, Node* loop) 
 #ifdef ASSERT
 void PhaseIdealLoop::ensure_zero_trip_guard_proj(Node* node, bool is_main_loop) {
   assert(node->is_IfProj(), "must be the zero trip guard If node");
-  Node* zer_bol = node->in(0)->in(1);
-  assert(zer_bol != NULL && zer_bol->is_Bool(), "must be Bool");
-  Node* zer_cmp = zer_bol->in(1);
-  assert(zer_cmp != NULL && zer_cmp->Opcode() == Op_CmpI, "must be CmpI");
-  // For the main loop, the opaque node is the second input to zer_cmp, for the post loop it's the first input node
-  Node* zer_opaq = zer_cmp->in(is_main_loop ? 2 : 1);
-  assert(zer_opaq != NULL &&
-         (is_main_loop ? zer_opaq->is_OpaqueZeroTripGuardMainLoop()
-                       : zer_opaq->is_OpaqueZeroTripGuardPostLoop()),
+  IfNode* iff = node->in(0)->as_If();
+  OpaqueZeroTripGuardNode* opaq = iff->find_opaque_zero_trip_guard();
+  assert(opaq != NULL &&
+         (is_main_loop ? opaq->is_OpaqueZeroTripGuardMainLoop()
+                       : opaq->is_OpaqueZeroTripGuardPostLoop()),
          "must be OpaqueZeroTripGuard for main or post loop");
 }
 #endif

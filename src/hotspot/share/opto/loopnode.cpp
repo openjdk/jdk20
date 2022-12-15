@@ -5451,43 +5451,17 @@ Node* PhaseIdealLoop::compute_lca_of_uses(Node* n, Node* early, bool verify) {
 // be guaranteed anymore.
 Node* CountedLoopNode::is_canonical_loop_entry() {
   if (!is_main_loop() && !is_post_loop()) {
-    return NULL;
+    return nullptr;
   }
   Node* ctrl = skip_predicates();
-
-  if (ctrl == NULL || (!ctrl->is_IfTrue() && !ctrl->is_IfFalse())) {
+  if (ctrl == nullptr || (!ctrl->is_IfTrue() && !ctrl->is_IfFalse())) {
     return NULL;
   }
-  Node* iffm = ctrl->in(0);
-  if (iffm == NULL || !iffm->is_If()) {
+  Node* iff = ctrl->in(0);
+  if (iff == NULL || !iff->is_If()) {
     return NULL;
   }
-  Node* bolzm = iffm->in(1);
-  if (bolzm == NULL || !bolzm->is_Bool()) {
-    return NULL;
-  }
-  Node* cmpzm = bolzm->in(1);
-  if (cmpzm == NULL || !cmpzm->is_Cmp()) {
-    return NULL;
-  }
-
-  uint input = is_main_loop() ? 2 : 1;
-  if (input >= cmpzm->req() || cmpzm->in(input) == NULL) {
-    return NULL;
-  }
-  bool res = cmpzm->in(input)->is_OpaqueZeroTripGuard();
-#ifdef ASSERT
-  bool found_opaque = false;
-  for (uint i = 1; i < cmpzm->req(); i++) {
-    Node* opnd = cmpzm->in(i);
-    if (opnd && opnd->is_Opaque1()) {
-      found_opaque = true;
-      break;
-    }
-  }
-  assert(found_opaque == res, "wrong pattern");
-#endif
-  return res ? cmpzm->in(input) : NULL;
+  return iff->as_If()->find_opaque_zero_trip_guard();
 }
 
 //------------------------------get_late_ctrl----------------------------------

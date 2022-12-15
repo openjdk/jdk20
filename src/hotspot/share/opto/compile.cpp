@@ -407,10 +407,9 @@ void Compile::remove_useless_node(Node* dead) {
 }
 
 // Disconnect all useless nodes by disconnecting those at the boundary.
-void Compile::disconnect_useless_nodes(Unique_Node_List &useful, Unique_Node_List* worklist) {
-  uint next = 0;
-  while (next < useful.size()) {
-    Node *n = useful.at(next++);
+void Compile::disconnect_useless_nodes(Unique_Node_List &useful, Unique_Node_List* worklist, PhaseIterGVN* igvn) {
+  for (uint i = 0; i < useful.size(); i++) {
+    Node *n = useful.at(i);
     if (n->is_SafePoint()) {
       // We're done with a parsing phase. Replaced nodes are not valid
       // beyond that point.
@@ -427,6 +426,20 @@ void Compile::disconnect_useless_nodes(Unique_Node_List &useful, Unique_Node_Lis
         n->raw_del_out(j);
         --j;
         --max;
+      }
+    }
+    if (n->is_If() && n->outcnt() < 2) {
+      IfNode* iff = n->as_If();
+      OpaqueZeroTripGuardNode* opaq = iff->find_opaque_zero_trip_guard();
+      if (opaq != nullptr) {
+        // We removed the LoopNode during CCP, but still have the zero trip guard
+        // which did not collapse because of the Opaque node, remove it now.
+        // If the LoopNode dies during IGVN, we catch that in RegionNode::Ideal
+        // and remove the respective Opaque node there.
+        ProjNode* proj = iff->unique_ctrl_out()->as_Proj();
+        assert(igvn != nullptr, "must happen when we have igvn");
+        ConNode* con = igvn->intcon(proj->_con);
+        igvn->replace_input_of(iff, 1, con);
       }
     }
     if (n->outcnt() == 1 && n->has_special_unique_user()) {
