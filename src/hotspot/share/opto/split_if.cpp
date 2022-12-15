@@ -221,7 +221,7 @@ bool PhaseIdealLoop::split_up( Node *n, Node *blk1, Node *blk2 ) {
     }
   }
 
-  if (n->Opcode() == Op_OpaqueZeroTripGuard) {
+  if (n->is_OpaqueZeroTripGuard()) {
     // If this Opaque1 is part of the zero trip guard for a loop:
     // 1- it can't be shared
     // 2- the zero trip guard can't be the if that's being split
