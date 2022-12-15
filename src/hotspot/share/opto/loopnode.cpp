@@ -2967,23 +2967,17 @@ const Type* OuterStripMinedLoopEndNode::Value(PhaseGVN* phase) const {
 bool OuterStripMinedLoopEndNode::is_expanded(PhaseGVN *phase) const {
   // The outer strip mined loop head only has Phi uses after expansion
   if (phase->is_IterGVN()) {
-    OuterStripMinedLoopNode* head = loopnode();
-    if (head != nullptr && head->find_out_with(Op_Phi) != nullptr) {
-      return true;
+    Node* backedge = proj_out_or_null(true);
+    if (backedge != NULL) {
+      Node* head = backedge->unique_ctrl_out_or_null();
+      if (head != NULL && head->is_OuterStripMinedLoop()) {
+        if (head->find_out_with(Op_Phi) != NULL) {
+          return true;
+        }
+      }
     }
   }
   return false;
-}
-
-OuterStripMinedLoopNode* OuterStripMinedLoopEndNode::loopnode() const {
-  Node* backedge = proj_out_or_null(true);
-  if (backedge != nullptr) {
-    Node* head = backedge->unique_ctrl_out_or_null();
-    if (head != nullptr && head->is_OuterStripMinedLoop()) {
-      return head->as_OuterStripMinedLoop();
-    }
-  }
-  return nullptr; // not found
 }
 
 Node *OuterStripMinedLoopEndNode::Ideal(PhaseGVN *phase, bool can_reshape) {

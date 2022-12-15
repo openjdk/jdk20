@@ -94,7 +94,6 @@ public:
     init_class_id(Class_OpaqueZeroTripGuardPostLoop);
   }
   virtual int Opcode() const;
-  virtual Node* Identity(PhaseGVN* phase);
 };
 
 //------------------------------Opaque3Node------------------------------------

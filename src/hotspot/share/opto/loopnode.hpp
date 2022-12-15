@@ -592,7 +592,6 @@ public:
   virtual Node *Ideal(PhaseGVN *phase, bool can_reshape);
 
   bool is_expanded(PhaseGVN *phase) const;
-  OuterStripMinedLoopNode* loopnode() const;
 };
 
 // -----------------------------IdealLoopTree----------------------------------
