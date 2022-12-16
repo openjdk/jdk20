@@ -367,6 +367,7 @@ public class DefaultCaret extends Rectangle implements Caret, FocusListener, Mou
     }
 
     private int savedBlinkRate = 0;
+    private boolean blinkRateSaved = false;
     // --- FocusListener methods --------------------------
 
     /**
@@ -380,16 +381,19 @@ public class DefaultCaret extends Rectangle implements Caret, FocusListener, Mou
     public void focusGained(FocusEvent e) {
         if (component.isEnabled()) {
             if (component.isEditable()) {
-                if (savedBlinkRate != 0) {
+                if (blinkRateSaved) {
                     setBlinkRate(savedBlinkRate);
                     savedBlinkRate = 0;
+                    blinkRateSaved = false;
                 }
             } else {
                 if (getBlinkRate() != 0) {
-                    savedBlinkRate = getBlinkRate();
+                    if (!blinkRateSaved) {
+                        savedBlinkRate = getBlinkRate();
+                        blinkRateSaved = true;
+                    }
                     setBlinkRate(0);
                 }
-
             }
             setVisible(true);
             setSelectionVisible(true);
@@ -1042,6 +1046,9 @@ public class DefaultCaret extends Rectangle implements Caret, FocusListener, Mou
      * @see Caret#setBlinkRate
      */
     public void setBlinkRate(int rate) {
+        if (rate < 0) {
+            throw new IllegalArgumentException("Invalid blink rate: " + rate);
+        }
         if (rate != 0) {
             if (component.isEditable()) {
                 if (flasher == null) {
@@ -1050,12 +1057,19 @@ public class DefaultCaret extends Rectangle implements Caret, FocusListener, Mou
                 flasher.setDelay(rate);
             } else {
                 savedBlinkRate = rate;
+                blinkRateSaved = true;
             }
         } else {
             if (flasher != null) {
                 flasher.stop();
                 flasher.removeActionListener(handler);
                 flasher = null;
+            }
+            if (component.isEditable()) {
+                if (blinkRateSaved) {
+                    savedBlinkRate = 0;
+                    blinkRateSaved = false;
+                }
             }
         }
     }
@@ -1068,6 +1082,9 @@ public class DefaultCaret extends Rectangle implements Caret, FocusListener, Mou
      * @see Caret#getBlinkRate
      */
     public int getBlinkRate() {
+        if (blinkRateSaved) {
+            return savedBlinkRate;
+        }
         return (flasher == null) ? 0 : flasher.getDelay();
     }
 
