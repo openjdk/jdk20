@@ -121,19 +121,21 @@ public class TestChunkIntegrity {
             List<RecordedEvent> full = RecordingFile.readAllEvents(file);
             List<Path> chunkFiles = new ArrayList<>(Files.list(directory).toList());
             Collections.sort(chunkFiles);            
-            int index = 0;
+            int total = 0;
             for (Path chunkFile : chunkFiles) {
-                System.out.println("Veryfying chunk: " + chunkFile + " " + index);
+                System.out.println("Veryfying chunk: " + chunkFile + " " + total);
                 try (RecordingFile f = new RecordingFile(chunkFile)) {
+                    int index = 0;
                     while (f.hasMoreEvents()) {
                         RecordedEvent event = f.readEvent();
                         assertStressEvent(event, f, index);
-                        assertEventEquals(full.get(index), event, index);
+                        assertEventEquals(full.get(total + index), event, index);
                         index++;
                     }
+                    total += index;
                 }
             }
-            System.out.println("Event count: " +index);
+            System.out.println("Event count: " + total);
         }
     }
 
@@ -158,7 +160,7 @@ public class TestChunkIntegrity {
         Path file = Path.of("failure.jfr");
         AtomicInteger count = new AtomicInteger();
         f.write(file, e-> count.incrementAndGet() == index + 1);
-        System.out.println("Failure file with only event + " + index + " written to: " + file);
+        System.out.println("Failure file with only event " + index + " written to: " + file);
     }
 
     static void assertEventEquals(RecordedEvent a, RecordedEvent b, int index) {
