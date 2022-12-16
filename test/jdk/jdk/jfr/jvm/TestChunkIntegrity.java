@@ -116,11 +116,11 @@ public class TestChunkIntegrity {
             Path directory = Path.of("disassembled");
             Files.createDirectories(directory);
             disassemble(file, directory);
-            
+
             // Verification
             List<RecordedEvent> full = RecordingFile.readAllEvents(file);
             List<Path> chunkFiles = new ArrayList<>(Files.list(directory).toList());
-            Collections.sort(chunkFiles);            
+            Collections.sort(chunkFiles);
             int total = 0;
             for (Path chunkFile : chunkFiles) {
                 System.out.println("Veryfying chunk: " + chunkFile + " " + total);
@@ -209,7 +209,7 @@ public class TestChunkIntegrity {
         }
         // Thread name may change, so sufficient to compare ID
         if (a instanceof RecordedThread t1 && b instanceof RecordedThread t2) {
-            return t1.getId() == t2.getId(); 
+            return t1.getId() == t2.getId();
         }
         if (a instanceof RecordedObject r1 && b instanceof RecordedObject r2) {
             for (ValueDescriptor field : r1.getFields()) {
