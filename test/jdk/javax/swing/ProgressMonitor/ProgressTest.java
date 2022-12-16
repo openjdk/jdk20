@@ -42,12 +42,11 @@ public class ProgressTest {
             " If it shows blank progressbar after 2048MB bytes read,"+
             " press Fail else press Pass";
 
-    private static JFrame frame;
-
     public static void main(String[] args) throws Exception {
 
         PassFailJFrame pfjFrame = new PassFailJFrame("JScrollPane "
                 + "Test Instructions", instructionsText, 5);
+        PassFailJFrame.positionTestWindow(null, PassFailJFrame.Position.VERTICAL);
 
         final long SIZE = (long) (Integer.MAX_VALUE * 1.5);
 
@@ -85,6 +84,7 @@ public class ProgressTest {
             }
         };
         thread.start();
+
         pfjFrame.awaitAndCheck();
     }
 }
