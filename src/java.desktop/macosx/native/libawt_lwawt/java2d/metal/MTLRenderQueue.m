@@ -67,14 +67,10 @@ void MTLRenderQueue_CheckPreviousOp(jint op) {
         return;
     }
 
-    if (isDrawOp(mtlPreviousOp)) {
+    if (isDrawOp(mtlPreviousOp) && !isDrawOp(op)) {
         // submit the vertex batch
         MTLRenderer_SubmitVertexBatch(mtlc, dstOps);
-        if (isDrawOp(op)) {
-            // Do not cause endEncoder if we continue with Draw operations
-            mtlPreviousOp = op;
-            return;
-        }
+        mtlPreviousOp = op;
     }
 
     if (op == MTL_OP_SET_COLOR) {
