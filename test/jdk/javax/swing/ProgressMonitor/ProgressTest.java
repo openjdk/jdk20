@@ -37,8 +37,8 @@ public class ProgressTest {
 
     private static final String instructionsText =
             "A ProgressMonitor will be shown.\n" +
-                    " If it shows blank progressbar after 2048MB bytes read,\n"+
-                    " press Fail else press Pass";
+            " If it shows blank progressbar after 2048MB bytes read,\n"+
+            " press Fail else press Pass";
 
     public static void main(String[] args) throws Exception {
 
