@@ -1055,6 +1055,9 @@ public class DefaultCaret extends Rectangle implements Caret, FocusListener, Mou
                     flasher = new Timer(rate, handler);
                 }
                 flasher.setDelay(rate);
+                if (!flasher.isRunning()){
+                    flasher.restart();
+                }
             } else {
                 savedBlinkRate = rate;
                 blinkRateSaved = true;
