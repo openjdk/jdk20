@@ -111,6 +111,10 @@ class PlaceholderEntry {
       Symbol::maybe_increment_refcount(_supername);
     }
   }
+  void               clear_supername() {
+    Symbol::maybe_decrement_refcount(_supername);
+    _supername = nullptr;
+  }
 
   JavaThread*        definer()             const {return _definer; }
   void               set_definer(JavaThread* definer) { _definer = definer; }
