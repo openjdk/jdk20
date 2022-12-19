@@ -122,8 +122,8 @@ import sun.security.action.GetIntegerAction;
  *     try (FileInputStream fis = new FileInputStream("t.tmp");
  *          ObjectInputStream ois = new ObjectInputStream(fis)) {
  *         String label = (String) ois.readObject();
- *         LocalDateTime date = (LocalDateTime) ois.readObject();
- *         System.out.println(label + ": " + date);
+ *         LocalDateTime dateTime = (LocalDateTime) ois.readObject();
+ *         // Use label and dateTime
  *     } catch (Exception ex) {
  *         // handle exception
  *     }
