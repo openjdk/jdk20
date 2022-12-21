@@ -1065,11 +1065,9 @@ public class DefaultCaret extends Rectangle implements Caret, FocusListener, Mou
                 flasher.removeActionListener(handler);
                 flasher = null;
             }
-            if (component.isEditable()) {
-                if (isBlinkRateSaved) {
-                    savedBlinkRate = 0;
-                    isBlinkRateSaved = false;
-                }
+            if (component.isEditable() && isBlinkRateSaved) {
+                savedBlinkRate = 0;
+                isBlinkRateSaved = false;
             }
         }
     }
