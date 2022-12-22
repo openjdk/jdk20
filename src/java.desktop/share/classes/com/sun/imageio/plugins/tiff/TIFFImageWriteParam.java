@@ -78,8 +78,8 @@ import javax.imageio.ImageWriteParam;
  * <tr>
  * <td>Exif JPEG</td>
  * <td>Exif-specific JPEG compression (see note following this table)</td>
- * <td><a href="https://www.kodak.com/global/plugins/acrobat/en/service/
- * digCam/exifStandard2.pdf">Exif 2.2 Specification</a>
+ * <td><a href="https://www.kodak.com/global/plugins/acrobat/en/service/digCam/exifStandard2.pdf">
+ * Exif 2.2 Specification</a>
  * (PDF), section 4.5.5, "Basic Structure of Thumbnail Data"</td>
  * </table>
  *
