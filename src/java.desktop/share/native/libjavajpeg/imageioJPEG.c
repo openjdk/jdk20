@@ -1614,8 +1614,8 @@ Java_com_sun_imageio_plugins_jpeg_JPEGImageReader_setSource
 /*
  * For EXIF images, the APP1 will appear immediately after the SOI,
  * so it's safe to only look at the first marker in the list.
- * (see https://www.kodak.com/global/plugins/acrobat/en/service/digCam/exifStandard2.pdf,
- * section 4.7, page 58)
+ * (see https://www.cipa.jp/std/documents/e/DC-008-2012_E.pdf,
+ * section 4.7, page 83)
  */
 #define IS_EXIF(c) \
     (((c)->marker_list != NULL) && ((c)->marker_list->marker == JPEG_APP1))
@@ -1716,8 +1716,8 @@ Java_com_sun_imageio_plugins_jpeg_JPEGImageReader_readImageHeader
              *  - we got JFIF image
              *     Must be YCbCr (see http://www.w3.org/Graphics/JPEG/jfif3.pdf, page 2)
              *  - we got EXIF image
-             *     Must be YCbCr (see https://www.kodak.com/global/plugins/acrobat/en/service/digCam/exifStandard2.pdf,
-             *     section 4.7, page 63)
+             *     Must be YCbCr (see https://www.cipa.jp/std/documents/e/DC-008-2012_E.pdf,
+             *     section 4.7, page 88)
              *  - something else
              *     Apply heuristical rules to identify actual colorspace.
              */
