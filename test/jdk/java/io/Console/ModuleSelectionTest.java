@@ -23,7 +23,7 @@
 
 /**
  * @test
- * @bug 8295803 8299137
+ * @bug 8295803 8299689
  * @summary Tests System.console() returns correct Console (or null) from the expected
  *          module.
  * @modules java.base/java.io:+open

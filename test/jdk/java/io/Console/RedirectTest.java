@@ -28,7 +28,7 @@ import jdk.test.lib.process.ProcessTools;
 
 /**
  * @test
- * @bug 8295803 8299137
+ * @bug 8295803 8299689
  * @summary Tests System.console() works with standard input redirection.
  * @library /test/lib
  * @run main RedirectTest
