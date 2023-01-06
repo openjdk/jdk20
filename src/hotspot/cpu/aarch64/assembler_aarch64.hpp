@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2022, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2023, Oracle and/or its affiliates. All rights reserved.
  * Copyright (c) 2014, 2021, Red Hat Inc. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
@@ -505,7 +505,13 @@ class Address {
   }
 
   bool uses(Register reg) const {
-    return base() == reg || index() == reg;
+    switch (_mode) {
+    case literal:
+    case no_mode:
+      return false;
+    default:
+      return base() == reg || index() == reg;
+    }
   }
 
   address target() const {
