@@ -509,8 +509,15 @@ class Address {
     case literal:
     case no_mode:
       return false;
-    default:
+    case base_plus_offset:
+    case base_plus_offset_reg:
+    case pre:
+    case post:
+    case post_reg:
       return base() == reg || index() == reg;
+    default:
+      ShouldNotReachHere();
+      return false;
     }
   }
 
