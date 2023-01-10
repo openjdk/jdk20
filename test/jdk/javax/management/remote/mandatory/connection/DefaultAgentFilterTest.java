@@ -423,7 +423,7 @@ public class DefaultAgentFilterTest {
             }
 
             // Use javax.management.AttributeList:
-            AttributeList attrs = conn.getAttributes(name, new String [] { "MyAttribute", "MyAttribute2" }); 
+            AttributeList attrs = conn.getAttributes(name, new String [] { "MyAttribute", "MyAttribute2" });
             attrs = conn.setAttributes(name, attrs); // Setting fails if filter too restrictive
 
             // Sending a Query uses several classes from javax.management:
