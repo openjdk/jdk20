@@ -323,6 +323,10 @@ public sealed interface Linker permits AbstractLinker {
          * <p>
          * Execution state is captured by a downcall method handle on invocation, by writing it
          * to a native segment provided by the user to the downcall method handle.
+         * For this purpose, a downcall method handle linked with the {@link #captureCallState(String[])}
+         * option will feature an additional {@link MemorySegment} parameter directly
+         * following the target address parameter. This parameter represents the native segment
+         * into which the captured state is written.
          * <p>
          * The native segment should have the layout {@linkplain CaptureCallState#layout associated}
          * with the particular {@code CaptureCallState} instance used to link the downcall handle.
