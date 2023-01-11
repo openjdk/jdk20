@@ -208,18 +208,22 @@ public class DefaultAgentFilterTest {
     private static final String TEST_APP_NAME = "TestApp";
     private static final int FREE_PORT_ATTEMPTS = 10;
 
-    private static void testDefaultAgent(String propertyFile, boolean testAttributes) throws Exception {
-        testDefaultAgent(propertyFile, null, testAttributes);
+    private static void testDefaultAgent(String propertyFile) throws Exception {
+        testDefaultAgent(propertyFile, null, true /* test operations */);
     }
 
-    private static void testDefaultAgent(String propertyFile, String additionalArgument, boolean testAttributes) throws Exception {
+    private static void testDefaultAgent(String propertyFile, boolean testOperations) throws Exception {
+        testDefaultAgent(propertyFile, null, testOperations);
+    }
+
+    private static void testDefaultAgent(String propertyFile, String additionalArgument, boolean testOperations) throws Exception {
         for (int i = 1; i <= FREE_PORT_ATTEMPTS; i++) {
             int port = Utils.getFreePort();
             System.out.println("Attempting testDefaultAgent(" +
                                (propertyFile != null ? propertyFile : "no properties")
                                + ") with port: " + port);
             try {
-                testDefaultAgent(propertyFile, additionalArgument, port, testAttributes);
+                testDefaultAgent(propertyFile, additionalArgument, port, testOperations);
                 break;  // return succesfully
             } catch (BindException b) {
                 // Retry with new port.  Throw if last iteration:
@@ -231,9 +235,10 @@ public class DefaultAgentFilterTest {
     }
 
     /**
-      * Run the test app and connect. Test MBean Operations, or, if the boolean testAttributes is true, test Attributes (set, get).
+      * Run the test app and connect. Test MBean Operations if the boolean testOperations is true, otherwise 
+      * test other usages (Attributes, Query).
       */
-    private static void testDefaultAgent(String propertyFile, String additionalArgument, int port, boolean testAttributes) throws Exception {
+    private static void testDefaultAgent(String propertyFile, String additionalArgument, int port, boolean testOperations) throws Exception {
         List<String> pbArgs = new ArrayList<>(Arrays.asList(
                 "-cp",
                 System.getProperty("test.class.path"),
@@ -259,10 +264,10 @@ public class DefaultAgentFilterTest {
         try (TestAppRun s = new TestAppRun(pb, DefaultAgentFilterTest.class.getSimpleName())) {
             s.start();
             JMXServiceURL url = testConnect(port);
-            if (testAttributes) {
-                testMBeanAttributes(url);
-            } else {
+            if (testOperations) {
                 testMBeanOperations(url);
+            } else {
+                testMBeanOtherClasses(url);
             }
         }
     }
@@ -311,7 +316,7 @@ public class DefaultAgentFilterTest {
 
         try {
             // filter DefaultAgentFilterTest$MyTestObject
-            testDefaultAgent("mgmt1.properties", false);
+            testDefaultAgent("mgmt1.properties");
             System.out.println("----\tTest FAILED !!");
             throw new RuntimeException("---" + DefaultAgentFilterTest.class.getName() + " - No exception reported");
         } catch (Exception ex) {
@@ -328,7 +333,7 @@ public class DefaultAgentFilterTest {
         }
         try {
             // filter non-existent class
-            testDefaultAgent("mgmt2.properties", false);
+            testDefaultAgent("mgmt2.properties");
             System.out.println("----\tTest PASSED !!");
         } catch (Exception ex) {
             System.out.println(ex);
@@ -337,7 +342,7 @@ public class DefaultAgentFilterTest {
         }
         try {
             // Use default filter, should fail with: java.io.InvalidClassException: filter status: REJECTED
-            testDefaultAgent(null /* no properties file */, false);
+            testDefaultAgent(null /* no properties file */);
             throw new RuntimeException("---" + DefaultAgentFilterTest.class.getName() + " - No exception reported");
         } catch (Exception ex) {
             System.out.println(ex);
@@ -349,8 +354,8 @@ public class DefaultAgentFilterTest {
             }
         }
         try {
-            // Test Attributes work by default:
-            testDefaultAgent(null /* no properties file */, true);
+            // Test Attributes and Query work by default:
+            testDefaultAgent(null /* no properties file */,  false /* not testing operations */);
         } catch (Exception ex) {
             System.out.println(ex);
             System.out.println("----\tTest FAILED !!");
@@ -360,7 +365,8 @@ public class DefaultAgentFilterTest {
             // Add custom filter on command-line.
             testDefaultAgent(null, "-Dcom.sun.management.jmxremote.serial.filter.pattern=\"java.lang.*;java.math.BigInteger;"
                              + "java.math.BigDecimal;java.util.*;javax.management.openmbean.*;javax.management.ObjectName;"
-                             + "java.rmi.MarshalledObject;javax.security.auth.Subject;DefaultAgentFilterTest$MyTestObject;!*\"", false);
+                             + "java.rmi.MarshalledObject;javax.security.auth.Subject;DefaultAgentFilterTest$MyTestObject;!*\"",
+                             true /* test operations */);
             System.out.println("----\tTest PASSED: with custom filter on command-line");
         } catch (Exception ex) {
             System.out.println(ex);
@@ -403,7 +409,7 @@ public class DefaultAgentFilterTest {
         }
     }
 
-    private static void testMBeanAttributes(JMXServiceURL serverUrl) throws Exception {
+    private static void testMBeanOtherClasses(JMXServiceURL serverUrl) throws Exception {
         Map<String, Object> clientEnv = new HashMap<>(1);
         ObjectName name = new ObjectName("jtreg:type=Test");
         try (JMXConnector client = JMXConnectorFactory.connect(serverUrl, clientEnv)) {
@@ -430,7 +436,7 @@ public class DefaultAgentFilterTest {
             QueryExp exp = Query.isInstanceOf(Query.value("notImportantClassName"));
             Set<ObjectInstance> queryResult = conn.queryMBeans(name, exp);
 
-            System.out.println("Done testMBeanAttributes");
+            System.out.println("Done testMBeanOtherClasses");
         }
     }
 }
