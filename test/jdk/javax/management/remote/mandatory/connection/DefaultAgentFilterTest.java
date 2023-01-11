@@ -235,8 +235,8 @@ public class DefaultAgentFilterTest {
     }
 
     /**
-      * Run the test app and connect. Test MBean Operations if the boolean testOperations is true, otherwise 
-      * test other usages (Attributes, Query).
+      * Run the test app and connect. Test MBean Operations if the boolean testOperations is true, otherwise
+      * test other usages (Attributes, Query)
       */
     private static void testDefaultAgent(String propertyFile, String additionalArgument, int port, boolean testOperations) throws Exception {
         List<String> pbArgs = new ArrayList<>(Arrays.asList(
