@@ -299,7 +299,9 @@ public class PatternDesugaring extends TestRunner {
         } finally {
             System.setOut(prevOut);
         }
-        validate.accept(new String(data.toByteArray(), StandardCharsets.UTF_8));
+        String output = new String(data.toByteArray(), StandardCharsets.UTF_8);
+        output = output.replaceAll("\\R", "\n");
+        validate.accept(output);
     }
 
 }
