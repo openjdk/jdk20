@@ -52,9 +52,14 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javax.management.Attribute;
 import javax.management.AttributeList;
+import javax.management.AttributeChangeNotification;
 import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
 import javax.management.ObjectInstance;
+import javax.management.MBeanNotificationInfo;
+import javax.management.Notification;
+import javax.management.NotificationBroadcasterSupport;
+import javax.management.NotificationListener;
 import javax.management.Query;
 import javax.management.QueryExp;
 import javax.management.remote.JMXConnector;
@@ -89,10 +94,12 @@ public class DefaultAgentFilterTest {
         public String getMyAttribute2();
     }
 
-    public static class Test implements TestMBean {
+    public static class Test extends NotificationBroadcasterSupport implements TestMBean {
 
         boolean myAttribute;
         String myAttribute2;
+
+        private long sequenceNumber = 1;
 
         @Override
         public void op1(HashSet<Object> params) {
@@ -120,13 +127,27 @@ public class DefaultAgentFilterTest {
         }
 
         public void setMyAttribute2(String s) {
+            String old = myAttribute2;
             this.myAttribute2 = s;
+            Notification n = new AttributeChangeNotification(this, sequenceNumber++, System.currentTimeMillis(),
+                                                             "String attribute changed", "myAttribute2", "String",
+                                                             old, this.myAttribute2);
+            sendNotification(n);
             System.out.println("Invoked setMyAttribute2");
         }
 
         public String getMyAttribute2() {
             System.out.println("Invoked getMyAttribute2");
             return myAttribute2;
+        }
+
+        @Override
+        public MBeanNotificationInfo[] getNotificationInfo() {
+            String[] types = new String[] { AttributeChangeNotification.ATTRIBUTE_CHANGE };
+            String name = AttributeChangeNotification.class.getName();
+            String description = "An attribute of this MBean has changed";
+            MBeanNotificationInfo info = new MBeanNotificationInfo(types, name, description);
+            return new MBeanNotificationInfo[] {info};
         }
     }
 
@@ -435,6 +456,16 @@ public class DefaultAgentFilterTest {
             // Sending a Query uses several classes from javax.management:
             QueryExp exp = Query.isInstanceOf(Query.value("notImportantClassName"));
             Set<ObjectInstance> queryResult = conn.queryMBeans(name, exp);
+
+            // Notification:
+            conn.addNotificationListener(name, new NotificationListener() {
+                public void handleNotification(Notification notification, Object handback) {
+                    System.out.println("Received notification: " +  notification);
+                } }, null,  null);
+            // Trigger a Notification:
+            conn.setAttribute(name, new Attribute("MyAttribute2", "my new string value"));
+            // Receiving the AttributeChangeNotification is not truly important for this test:
+            try { Thread.sleep(5000); } catch (InterruptedException ie) { }
 
             System.out.println("Done testMBeanOtherClasses");
         }
