@@ -1218,8 +1218,6 @@ static void gen_continuation_yield(MacroAssembler* masm,
 
     __ bind(pinned); // pinned -- return to caller
 
-
-
     // handle pending exception thrown by freeze
     __ ldr(rscratch1, Address(rthread, in_bytes(Thread::pending_exception_offset())));
     Label ok;
