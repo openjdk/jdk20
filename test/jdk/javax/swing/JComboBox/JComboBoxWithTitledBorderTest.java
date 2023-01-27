@@ -71,7 +71,7 @@ public class JComboBoxWithTitledBorderTest {
                 .collect(Collectors.toList());
         for (final String laf : lafs) {
             // Skip GTK L&F because pressing ENTER after editing JComboBox
-            // doesn't change text and resets to starting text instead
+            // doesn't change text and resets to starting text instead.
             if (laf.equals("com.sun.java.swing.plaf.gtk.GTKLookAndFeel")) {
                 return;
             }
