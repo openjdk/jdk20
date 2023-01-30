@@ -143,6 +143,7 @@ public class DefaultAgentFilterTest {
 
         @Override
         public MBeanNotificationInfo[] getNotificationInfo() {
+            System.out.println("Invoked getNotificationInfo");
             String[] types = new String[] { AttributeChangeNotification.ATTRIBUTE_CHANGE };
             String name = AttributeChangeNotification.class.getName();
             String description = "An attribute of this MBean has changed";
