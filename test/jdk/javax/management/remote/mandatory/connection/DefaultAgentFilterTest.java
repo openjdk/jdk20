@@ -241,8 +241,9 @@ public class DefaultAgentFilterTest {
     private static void testDefaultAgent(String propertyFile, String additionalArgument, boolean testOperations) throws Exception {
         for (int i = 1; i <= FREE_PORT_ATTEMPTS; i++) {
             int port = Utils.getFreePort();
-            System.out.println("Attempting testDefaultAgent(" +
-                               (propertyFile != null ? propertyFile : "no properties")
+            System.out.println("Attempting testDefaultAgent("
+                               + (propertyFile != null ? propertyFile : "no properties")
+                               + " testOperations=" + testOperations
                                + ") with port: " + port);
             try {
                 testDefaultAgent(propertyFile, additionalArgument, port, testOperations);
@@ -337,7 +338,7 @@ public class DefaultAgentFilterTest {
         System.out.println("---" + DefaultAgentFilterTest.class.getName() + "-main: starting ...");
 
         try {
-            // filter DefaultAgentFilterTest$MyTestObject
+            // Properties file filter blocks DefaultAgentFilterTest$MyTestObject
             testDefaultAgent("mgmt1.properties");
             System.out.println("----\tTest FAILED !!");
             throw new RuntimeException("---" + DefaultAgentFilterTest.class.getName() + " - No exception reported");
