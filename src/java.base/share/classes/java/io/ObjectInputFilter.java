@@ -187,7 +187,7 @@ import static java.lang.System.Logger.Level.ERROR;
  *
  * This class shows how an application provided filter factory can combine filters
  * to check every deserialization operation that takes place in a thread.
- * It defines a thread-local variable to hold the thread-specific filter, and constructs a filter factory
+ * It defines a thread-local variable to hold the thread-specific filter, and construct a filter factory
  * that composes that filter with the static JVM-wide filter and the stream-specific filter,
  * rejecting any classes not handled by those two filters.
  * If a stream specific filter is set and does not accept or reject a class,
