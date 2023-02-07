@@ -1050,7 +1050,7 @@ public class DefaultCaret extends Rectangle implements Caret, FocusListener, Mou
             throw new IllegalArgumentException("Invalid blink rate: " + rate);
         }
         if (rate != 0) {
-            if (component.isEditable()) {
+            if (component != null && component.isEditable()) {
                 if (flasher == null) {
                     flasher = new Timer(rate, handler);
                 }
@@ -1065,7 +1065,7 @@ public class DefaultCaret extends Rectangle implements Caret, FocusListener, Mou
                 flasher.removeActionListener(handler);
                 flasher = null;
             }
-            if (component.isEditable() && isBlinkRateSaved) {
+            if ((component == null || component.isEditable()) && isBlinkRateSaved) {
                 savedBlinkRate = 0;
                 isBlinkRateSaved = false;
             }
